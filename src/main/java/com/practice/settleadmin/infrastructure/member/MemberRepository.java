@@ -1,0 +1,9 @@
+package com.practice.settleadmin.infrastructure.member;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.practice.settleadmin.domain.member.Member;
+
+public interface MemberRepository extends JpaRepository<Member, Long> {
+	Boolean existsByEmail(String email);
+}
