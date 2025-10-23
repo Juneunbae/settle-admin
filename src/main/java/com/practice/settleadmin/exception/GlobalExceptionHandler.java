@@ -1,7 +1,11 @@
 package com.practice.settleadmin.exception;
 
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import lombok.AllArgsConstructor;
@@ -23,6 +27,17 @@ public class GlobalExceptionHandler {
 					ex.getBaseErrorCode().getMessage()
 				)
 			);
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ErrorMessage handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+		String msg = ex.getBindingResult().getFieldErrors().stream()
+			.findFirst()
+			.map(DefaultMessageSourceResolvable::getDefaultMessage)
+			.orElse("입력값이 올바르지 않습니다.");
+
+		return GlobalExceptionHandler.ErrorMessage.of("VALIDATION_ERROR", 400, msg);
 	}
 
 	@Getter
