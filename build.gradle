@@ -33,6 +33,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -40,6 +41,16 @@ dependencies {
 
     // db
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // map struct
+    implementation "org.mapstruct:mapstruct:1.5.5.Final"
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.5.5.Final"
+
+    // password-encoder
+    implementation 'org.springframework.security:spring-security-crypto:6.4.4'
+
+    // AssertJ
+    testImplementation 'org.assertj:assertj-core'
 
     // test
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
