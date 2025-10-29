@@ -81,4 +81,16 @@ public class Member {
 			.createdAt(LocalDateTime.now())
 			.build();
 	}
+
+	public static Member adminCreate(String email, String password, String name, String employeeNumber) {
+		return Member.builder()
+			.email(email)
+			.password(password)
+			.name(name)
+			.role(Role.OPERATION)
+			.employeeNumber(employeeNumber)
+			.status(Status.ACTIVATE)
+			.createdAt(LocalDateTime.now())
+			.build();
+	}
 }

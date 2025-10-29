@@ -6,4 +6,6 @@ import com.practice.settleadmin.domain.member.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 	Boolean existsByEmail(String email);
+
+	Boolean existsByEmailOrEmployeeNumber(String email, String employeeNumber);
 }

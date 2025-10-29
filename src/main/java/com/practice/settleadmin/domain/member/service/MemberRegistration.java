@@ -23,9 +23,22 @@ public class MemberRegistration {
 		return memberRepository.save(member);
 	}
 
+	public Member adminRegister(String email, String password, String name, String employeeNumber) {
+		existsByEmailOrEmployeeNumber(email, employeeNumber);
+		String encoded = passwordEncoder.encode(password);
+		Member member = Member.adminCreate(email, encoded, name, employeeNumber);
+		return memberRepository.save(member);
+	}
+
 	public void existsByEmail(String email) {
 		if (memberRepository.existsByEmail(email)) {
 			throw new GlobalException(MemberErrorCode.ALREADY_EXIST_EMAIL);
+		}
+	}
+
+	public void existsByEmailOrEmployeeNumber(String email, String employeeNumber) {
+		if (memberRepository.existsByEmailOrEmployeeNumber(email, employeeNumber)) {
+			throw new GlobalException(MemberErrorCode.ALREADY_EXIST_EMAIL_OR_EMPLOYEE_NUMBER);
 		}
 	}
 }
