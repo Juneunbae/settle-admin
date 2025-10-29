@@ -28,11 +28,6 @@ public class MemberRegistrationTest {
 	@InjectMocks
 	private MemberRegistration memberRegistration;
 
-	@BeforeEach
-	public void setUp() {
-		this.memberRegistration = new MemberRegistration(passwordEncoder, memberRepository);
-	}
-
 	@Test
 	@DisplayName(value = "멤버 저장 성공 테스트")
 	void successRegister() {
