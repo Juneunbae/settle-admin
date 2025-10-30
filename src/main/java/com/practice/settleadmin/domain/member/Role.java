@@ -7,6 +7,7 @@ public enum Role {
 	GENERAL("일반 회원"),
 	OPERATION("운영팀"),
 	OPERATION_LEADER("운영팀장"),
+	ADMIN("관리자"),
 	STORE_OWNER("점주");
 
 	private final String description;
