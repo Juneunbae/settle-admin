@@ -93,4 +93,9 @@ public class Member {
 			.createdAt(LocalDateTime.now())
 			.build();
 	}
+
+	public void promoteToAdmin() {
+		this.role = Role.ADMIN;
+		this.updatedAt = LocalDateTime.now();
+	}
 }

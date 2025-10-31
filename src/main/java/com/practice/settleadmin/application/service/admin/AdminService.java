@@ -4,14 +4,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.practice.settleadmin.application.dto.mapper.admin.AdminApplicationMapper;
+import com.practice.settleadmin.application.dto.request.admin.AdminPromotionRequestServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminSignUpRequestServiceDto;
+import com.practice.settleadmin.application.dto.response.admin.AdminPromotionResponseServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminSignUpResponseServiceDto;
 import com.practice.settleadmin.domain.member.Member;
+import com.practice.settleadmin.domain.member.Role;
 import com.practice.settleadmin.domain.member.service.MemberRegistration;
+import com.practice.settleadmin.domain.member.service.PromoteToAdmin;
 import com.practice.settleadmin.exception.GlobalException;
 import com.practice.settleadmin.exception.member.MemberErrorCode;
 import com.practice.settleadmin.infrastructure.member.MemberRepository;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AdminService {
 	private final AdminApplicationMapper mapper;
+	private final PromoteToAdmin promoteToAdmin;
 	private final MemberRepository memberRepository;
 	private final MemberRegistration memberRegistration;
 
+	@Transactional
 	public AdminSignUpResponseServiceDto signup(@Valid AdminSignUpRequestServiceDto request) {
 		existsByEmailOrEmployeeNumber(request.email(), request.employeeNumber());
 		Member newAdmin = memberRegistration.adminRegister(
@@ -33,9 +40,31 @@ public class AdminService {
 		return mapper.toAdminSignUpResponseServiceDto(newAdmin);
 	}
 
+	@Transactional
+	public AdminPromotionResponseServiceDto promoteToAdmin(@Valid AdminPromotionRequestServiceDto request) {
+		Member admin = findByEmailAndEmployeeNumber(request.email(), request.employeeNumber());
+		Member changeAdmin = promoteToAdmin.promote(admin, request.promotionCode());
+		String message = "관리자 승인이 완료되었습니다.";
+		return mapper.toAdminPromotionResponseServiceDto(changeAdmin, message);
+	}
+
 	public void existsByEmailOrEmployeeNumber(String email, String employeeNumber) {
 		if (memberRepository.existsByEmailOrEmployeeNumber(email, employeeNumber)) {
 			throw new GlobalException(MemberErrorCode.ALREADY_EXIST_EMAIL_OR_EMPLOYEE_NUMBER);
 		}
+	}
+
+	public Member findByEmailAndEmployeeNumber(String email, String employeeNumber) {
+		Member admin = memberRepository.findByEmailAndEmployeeNumber(email, employeeNumber);
+
+		if (admin == null) {
+			throw new GlobalException(MemberErrorCode.NOT_EXIST);
+		}
+
+		if (admin.getRole() != Role.OPERATION && admin.getRole() != Role.OPERATION_LEADER) {
+			throw new GlobalException(MemberErrorCode.ACCESS_DENIED);
+		}
+
+		return admin;
 	}
 }
