@@ -4,8 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.practice.settleadmin.application.dto.mapper.admin.AdminApplicationMapper;
+import com.practice.settleadmin.application.dto.request.admin.AdminCreateStoreOwnerReqServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminPromotionRequestServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminSignUpRequestServiceDto;
+import com.practice.settleadmin.application.dto.response.admin.AdminCreateStoreOwnerResServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminPromotionResponseServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminSignUpResponseServiceDto;
 import com.practice.settleadmin.domain.member.Member;
@@ -48,9 +50,36 @@ public class AdminService {
 		return mapper.toAdminPromotionResponseServiceDto(changeAdmin, message);
 	}
 
+	@Transactional
+	public AdminCreateStoreOwnerResServiceDto createStoreOwners(@Valid AdminCreateStoreOwnerReqServiceDto request) {
+		// Security 연동 후 수정
+		Member admin = findById(request.adminId());
+		if (!admin.getRole().equals(Role.ADMIN)) {
+			throw new GlobalException(MemberErrorCode.ACCESS_DENIED);
+		}
+
+		existsByEmailOrNameOrBusinessNumber(request.email(), request.name(), request.businessNumber());
+
+		Member storeOwner = memberRegistration.storeOwnerRegister(
+			request.email(), request.password(), request.name(), request.businessNumber()
+		);
+		return mapper.toAdminCreateStoreOwnerResServiceDto(storeOwner);
+	}
+
+	public Member findById(Long id) {
+		return memberRepository.findById(id)
+			.orElseThrow(() -> new GlobalException(MemberErrorCode.NOT_EXIST));
+	}
+
 	public void existsByEmailOrEmployeeNumber(String email, String employeeNumber) {
 		if (memberRepository.existsByEmailOrEmployeeNumber(email, employeeNumber)) {
 			throw new GlobalException(MemberErrorCode.ALREADY_EXIST_EMAIL_OR_EMPLOYEE_NUMBER);
+		}
+	}
+
+	public void existsByEmailOrNameOrBusinessNumber(String email, String name, String businessNumber) {
+		if (memberRepository.existsByEmailOrNameOrBusinessNumber(email, name, businessNumber)) {
+			throw new GlobalException(MemberErrorCode.ALREADY_EXIST_INFORMATION);
 		}
 	}
 

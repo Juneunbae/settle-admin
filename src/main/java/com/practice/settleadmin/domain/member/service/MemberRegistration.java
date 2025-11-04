@@ -15,14 +15,24 @@ public class MemberRegistration {
 	private final MemberRepository memberRepository;
 
 	public Member register(String email, String password, String name) {
-		String encoded = passwordEncoder.encode(password);
+		String encoded = this.encodedPassword(password);
 		Member member = Member.create(email, encoded, name);
 		return memberRepository.save(member);
 	}
 
 	public Member adminRegister(String email, String password, String name, String employeeNumber) {
-		String encoded = passwordEncoder.encode(password);
+		String encoded = this.encodedPassword(password);
 		Member member = Member.adminCreate(email, encoded, name, employeeNumber);
 		return memberRepository.save(member);
+	}
+
+	public Member storeOwnerRegister(String email, String password, String name, String businessNumber) {
+		String encoded = this.encodedPassword(password);
+		Member member = Member.storeOwnerCreate(email, encoded, name, businessNumber);
+		return memberRepository.save(member);
+	}
+
+	public String encodedPassword(String password) {
+		return passwordEncoder.encode(password);
 	}
 }

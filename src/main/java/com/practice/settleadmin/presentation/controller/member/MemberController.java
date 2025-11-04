@@ -13,9 +13,11 @@ import com.practice.settleadmin.presentation.dto.mapper.MemberPresentationMapper
 import com.practice.settleadmin.presentation.dto.request.member.GeneralSignUpRequestDto;
 import com.practice.settleadmin.presentation.dto.response.member.GeneralSignUpResponseDto;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "멤버")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")

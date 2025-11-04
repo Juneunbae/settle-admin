@@ -59,6 +59,11 @@ public class Member {
 	private String employeeNumber;
 
 	@Column(
+		length = 15
+	)
+	private String businessNumber;
+
+	@Column(
 		length = 20
 	)
 	@Enumerated(EnumType.STRING)
@@ -89,6 +94,18 @@ public class Member {
 			.name(name)
 			.role(Role.OPERATION)
 			.employeeNumber(employeeNumber)
+			.status(Status.ACTIVATE)
+			.createdAt(LocalDateTime.now())
+			.build();
+	}
+
+	public static Member storeOwnerCreate(String email, String password, String name, String businessNumber) {
+		return Member.builder()
+			.email(email)
+			.password(password)
+			.name(name)
+			.role(Role.STORE_OWNER)
+			.businessNumber(businessNumber)
 			.status(Status.ACTIVATE)
 			.createdAt(LocalDateTime.now())
 			.build();
