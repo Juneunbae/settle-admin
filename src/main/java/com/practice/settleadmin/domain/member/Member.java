@@ -111,6 +111,12 @@ public class Member {
 			.build();
 	}
 
+	public void storeOwnerUpdate(String name, String businessNumber) {
+		this.name = name;
+		this.businessNumber = businessNumber;
+		this.updatedAt = LocalDateTime.now();
+	}
+
 	public void promoteToAdmin() {
 		this.role = Role.ADMIN;
 		this.updatedAt = LocalDateTime.now();

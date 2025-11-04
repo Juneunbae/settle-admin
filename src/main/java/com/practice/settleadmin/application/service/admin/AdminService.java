@@ -7,13 +7,16 @@ import com.practice.settleadmin.application.dto.mapper.admin.AdminApplicationMap
 import com.practice.settleadmin.application.dto.request.admin.AdminCreateStoreOwnerReqServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminPromotionRequestServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminSignUpRequestServiceDto;
+import com.practice.settleadmin.application.dto.request.admin.AdminUpdateStoreOwnerReqServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminCreateStoreOwnerResServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminPromotionResponseServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminSignUpResponseServiceDto;
+import com.practice.settleadmin.application.dto.response.admin.AdminUpdateStoreOwnerResServiceDto;
 import com.practice.settleadmin.domain.member.Member;
 import com.practice.settleadmin.domain.member.Role;
 import com.practice.settleadmin.domain.member.service.MemberRegistration;
 import com.practice.settleadmin.domain.member.service.PromoteToAdmin;
+import com.practice.settleadmin.domain.member.service.UpdateToStoreOwner;
 import com.practice.settleadmin.exception.GlobalException;
 import com.practice.settleadmin.exception.member.MemberErrorCode;
 import com.practice.settleadmin.infrastructure.member.MemberRepository;
@@ -32,6 +35,7 @@ public class AdminService {
 	private final PromoteToAdmin promoteToAdmin;
 	private final MemberRepository memberRepository;
 	private final MemberRegistration memberRegistration;
+	private final UpdateToStoreOwner updateToStoreOwner;
 
 	@Transactional
 	public AdminSignUpResponseServiceDto signup(@Valid AdminSignUpRequestServiceDto request) {
@@ -66,14 +70,37 @@ public class AdminService {
 		return mapper.toAdminCreateStoreOwnerResServiceDto(storeOwner);
 	}
 
+	@Transactional
+	public AdminUpdateStoreOwnerResServiceDto updateStoreOwners(@Valid AdminUpdateStoreOwnerReqServiceDto request) {
+		Member storeOwner = this.findByIdForStoreOwner(request.storeOwnerId());
+		existsByNameOrBusinessNumber(request.name(), request.businessNumber());
+		Member updateStoreOwner = updateToStoreOwner.update(request, storeOwner);
+		return mapper.toAdminUpdateStoreOwnerResServiceDto(updateStoreOwner);
+	}
+
 	public Member findById(Long id) {
 		return memberRepository.findById(id)
 			.orElseThrow(() -> new GlobalException(MemberErrorCode.NOT_EXIST));
 	}
 
+	public Member findByIdForStoreOwner(Long id) {
+		Member storeOwner = this.findById(id);
+		if (!storeOwner.getRole().equals(Role.STORE_OWNER)) {
+			throw new GlobalException(MemberErrorCode.NOT_EXIST);
+		}
+
+		return storeOwner;
+	}
+
 	public void existsByEmailOrEmployeeNumber(String email, String employeeNumber) {
 		if (memberRepository.existsByEmailOrEmployeeNumber(email, employeeNumber)) {
 			throw new GlobalException(MemberErrorCode.ALREADY_EXIST_EMAIL_OR_EMPLOYEE_NUMBER);
+		}
+	}
+
+	public void existsByNameOrBusinessNumber(String name, String businessNumber) {
+		if (memberRepository.existsByNameOrBusinessNumber(name, businessNumber)) {
+			throw new GlobalException(MemberErrorCode.ALREADY_EXIST_INFORMATION);
 		}
 	}
 
