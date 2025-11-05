@@ -3,6 +3,7 @@ package com.practice.settleadmin.application.dto.mapper.admin;
 import org.mapstruct.Mapper;
 
 import com.practice.settleadmin.application.dto.response.admin.AdminCreateStoreOwnerResServiceDto;
+import com.practice.settleadmin.application.dto.response.admin.AdminDeleteStoreOwnerResServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminPromotionResponseServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminSignUpResponseServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminUpdateStoreOwnerResServiceDto;
@@ -17,4 +18,6 @@ public interface AdminApplicationMapper {
 	AdminCreateStoreOwnerResServiceDto toAdminCreateStoreOwnerResServiceDto(Member member);
 
 	AdminUpdateStoreOwnerResServiceDto toAdminUpdateStoreOwnerResServiceDto(Member member);
+
+	AdminDeleteStoreOwnerResServiceDto toAdminDeleteStoreOwnerResServiceDto(String email, String message);
 }

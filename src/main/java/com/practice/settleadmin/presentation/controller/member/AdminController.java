@@ -1,6 +1,7 @@
 package com.practice.settleadmin.presentation.controller.member;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -9,20 +10,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.practice.settleadmin.application.dto.request.admin.AdminCreateStoreOwnerReqServiceDto;
+import com.practice.settleadmin.application.dto.request.admin.AdminDeleteStoreOwnerReqServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminPromotionRequestServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminSignUpRequestServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminUpdateStoreOwnerReqServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminCreateStoreOwnerResServiceDto;
+import com.practice.settleadmin.application.dto.response.admin.AdminDeleteStoreOwnerResServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminPromotionResponseServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminSignUpResponseServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminUpdateStoreOwnerResServiceDto;
 import com.practice.settleadmin.application.service.admin.AdminService;
 import com.practice.settleadmin.presentation.dto.mapper.AdminPresentationMapper;
 import com.practice.settleadmin.presentation.dto.request.admin.AdminCreateStoreOwnerReqDto;
+import com.practice.settleadmin.presentation.dto.request.admin.AdminDeleteStoreOwnerReqDto;
 import com.practice.settleadmin.presentation.dto.request.admin.AdminPromotionRequestDto;
 import com.practice.settleadmin.presentation.dto.request.admin.AdminSignUpRequestDto;
 import com.practice.settleadmin.presentation.dto.request.admin.AdminUpdateStoreOwnerReqDto;
 import com.practice.settleadmin.presentation.dto.response.admin.AdminCreateStoreOwnerResDto;
+import com.practice.settleadmin.presentation.dto.response.admin.AdminDeleteStoreOwnerResDto;
 import com.practice.settleadmin.presentation.dto.response.admin.AdminPromotionResponseDto;
 import com.practice.settleadmin.presentation.dto.response.admin.AdminSignUpResponseDto;
 import com.practice.settleadmin.presentation.dto.response.admin.AdminUpdateStoreOwnerResDto;
@@ -86,6 +91,20 @@ public class AdminController {
 		AdminUpdateStoreOwnerResServiceDto serviceResponse = adminService.updateStoreOwners(serviceDto);
 
 		AdminUpdateStoreOwnerResDto responseDto = mapper.toAdminUpdateStoreOwnerResDto(serviceResponse);
+
+		return ResponseEntity.ok(responseDto);
+	}
+
+	@DeleteMapping("/store-owners/{id}")
+	@Operation(summary = "점주 정보 삭제하기", description = "점주 삭제를 위한 API")
+	public ResponseEntity<AdminDeleteStoreOwnerResDto> deleteStoreOwners(
+		@PathVariable Long id, @RequestBody AdminDeleteStoreOwnerReqDto req
+	) {
+		AdminDeleteStoreOwnerReqServiceDto serviceDto = mapper.toAdminDeleteStoreOwnerReqServiceDto(id, req);
+
+		AdminDeleteStoreOwnerResServiceDto serviceResponse = adminService.deleteStoreOwners(serviceDto);
+
+		AdminDeleteStoreOwnerResDto responseDto = mapper.toAdminDeleteStoreOwnerResDto(serviceResponse);
 
 		return ResponseEntity.ok(responseDto);
 	}

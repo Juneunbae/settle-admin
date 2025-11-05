@@ -5,10 +5,12 @@ import org.springframework.validation.annotation.Validated;
 
 import com.practice.settleadmin.application.dto.mapper.admin.AdminApplicationMapper;
 import com.practice.settleadmin.application.dto.request.admin.AdminCreateStoreOwnerReqServiceDto;
+import com.practice.settleadmin.application.dto.request.admin.AdminDeleteStoreOwnerReqServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminPromotionRequestServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminSignUpRequestServiceDto;
 import com.practice.settleadmin.application.dto.request.admin.AdminUpdateStoreOwnerReqServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminCreateStoreOwnerResServiceDto;
+import com.practice.settleadmin.application.dto.response.admin.AdminDeleteStoreOwnerResServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminPromotionResponseServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminSignUpResponseServiceDto;
 import com.practice.settleadmin.application.dto.response.admin.AdminUpdateStoreOwnerResServiceDto;
@@ -72,6 +74,7 @@ public class AdminService {
 
 	@Transactional
 	public AdminUpdateStoreOwnerResServiceDto updateStoreOwners(@Valid AdminUpdateStoreOwnerReqServiceDto request) {
+		// TODO: 로그인 한 유저가 Admin 검사
 		Member storeOwner = this.findByIdForStoreOwner(request.storeOwnerId());
 
 		if (request.name() != null && request.businessNumber() == null)
@@ -83,6 +86,18 @@ public class AdminService {
 
 		Member updateStoreOwner = updateToStoreOwner.update(request, storeOwner);
 		return mapper.toAdminUpdateStoreOwnerResServiceDto(updateStoreOwner);
+	}
+
+	@Transactional
+	public AdminDeleteStoreOwnerResServiceDto deleteStoreOwners(AdminDeleteStoreOwnerReqServiceDto request) {
+		// TODO: 로그인 한 유저가 Admin 검사
+		Member storeOwner = this.findById(request.id());
+		if (!storeOwner.getEmail().equals(request.email()))
+			throw new GlobalException(MemberErrorCode.NOT_EXIST);
+
+		memberRepository.delete(storeOwner);
+		String message = "점주가 성공적으로 삭제되었습니다.";
+		return mapper.toAdminDeleteStoreOwnerResServiceDto(request.email(), message);
 	}
 
 	public Member findById(Long id) {
