@@ -1,6 +1,7 @@
 package com.practice.settleadmin.presentation.controller.member;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,10 +76,12 @@ public class AdminController {
 		return ResponseEntity.ok(responseDto);
 	}
 
-	@PutMapping("/store-owners")
+	@PutMapping("/store-owners/{id}")
 	@Operation(summary = "점주 정보 수정하기", description = "점주 수정을 위한 API")
-	public ResponseEntity<AdminUpdateStoreOwnerResDto> updateStoreOwners(@RequestBody AdminUpdateStoreOwnerReqDto req) {
-		AdminUpdateStoreOwnerReqServiceDto serviceDto = mapper.toAdminUpdateStoreOwnerReqServiceDto(req);
+	public ResponseEntity<AdminUpdateStoreOwnerResDto> updateStoreOwners(
+		@PathVariable Long id, @RequestBody AdminUpdateStoreOwnerReqDto req
+	) {
+		AdminUpdateStoreOwnerReqServiceDto serviceDto = mapper.toAdminUpdateStoreOwnerReqServiceDto(id, req);
 
 		AdminUpdateStoreOwnerResServiceDto serviceResponse = adminService.updateStoreOwners(serviceDto);
 

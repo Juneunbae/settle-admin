@@ -73,7 +73,14 @@ public class AdminService {
 	@Transactional
 	public AdminUpdateStoreOwnerResServiceDto updateStoreOwners(@Valid AdminUpdateStoreOwnerReqServiceDto request) {
 		Member storeOwner = this.findByIdForStoreOwner(request.storeOwnerId());
-		existsByNameOrBusinessNumber(request.name(), request.businessNumber());
+
+		if (request.name() != null && request.businessNumber() == null)
+			existsByName(request.name());
+		else if (request.name() == null && request.businessNumber() != null)
+			existsByBusinessNumber(request.businessNumber());
+		else
+			existsByNameOrBusinessNumber(request.name(), request.businessNumber());
+
 		Member updateStoreOwner = updateToStoreOwner.update(request, storeOwner);
 		return mapper.toAdminUpdateStoreOwnerResServiceDto(updateStoreOwner);
 	}
@@ -90,6 +97,18 @@ public class AdminService {
 		}
 
 		return storeOwner;
+	}
+
+	public void existsByName(String name) {
+		if (memberRepository.existsByName(name)) {
+			throw new GlobalException(MemberErrorCode.ALREADY_EXIST_INFORMATION);
+		}
+	}
+
+	public void existsByBusinessNumber(String businessNumber) {
+		if (memberRepository.existsByBusinessNumber(businessNumber)) {
+			throw new GlobalException(MemberErrorCode.ALREADY_EXIST_INFORMATION);
+		}
 	}
 
 	public void existsByEmailOrEmployeeNumber(String email, String employeeNumber) {

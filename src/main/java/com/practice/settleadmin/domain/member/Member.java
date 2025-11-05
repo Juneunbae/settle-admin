@@ -112,8 +112,12 @@ public class Member {
 	}
 
 	public void storeOwnerUpdate(String name, String businessNumber) {
-		this.name = name;
-		this.businessNumber = businessNumber;
+		if (name != null)
+			this.name = name;
+
+		if (businessNumber != null)
+			this.businessNumber = businessNumber;
+
 		this.updatedAt = LocalDateTime.now();
 	}
 

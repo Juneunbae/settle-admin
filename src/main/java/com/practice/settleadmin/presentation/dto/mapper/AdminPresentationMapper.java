@@ -33,7 +33,9 @@ public interface AdminPresentationMapper {
 
 	AdminCreateStoreOwnerResDto toAdminCreateStoreOwnerResDto(AdminCreateStoreOwnerResServiceDto request);
 
-	AdminUpdateStoreOwnerReqServiceDto toAdminUpdateStoreOwnerReqServiceDto(AdminUpdateStoreOwnerReqDto request);
+	AdminUpdateStoreOwnerReqServiceDto toAdminUpdateStoreOwnerReqServiceDto(
+		Long storeOwnerId, AdminUpdateStoreOwnerReqDto request
+	);
 
 	AdminUpdateStoreOwnerResDto toAdminUpdateStoreOwnerResDto(AdminUpdateStoreOwnerResServiceDto request);
 }
